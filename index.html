@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Starship Treasures</title>
+    <!-- External CDN for Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <!-- Google Maps API (replace YOUR_API_KEY with a valid key) -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
+    <style>
+        /* Global styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background-color: #f2f2f2;
+            color: #000033;
+            line-height: 1.6;
+        }
+        h1, h2, h3 {
+            font-family: 'Futura', sans-serif;
+        }
+
+        /* Updated Header styles */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(0, 0, 51, 0.8); /* Dark blue with transparency */
+            backdrop-filter: blur(10px); /* Frosted glass effect */
+            padding: 15px 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+        nav h1 {
+            font-size: 28px;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        /* Navigation container */
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        /* Hide checkbox for hamburger menu toggle */
+        #nav-toggle {
+            display: none;
+        }
+        /* Navigation items */
+        .nav-menu a {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background: #fff;
+            border-radius: 50%;
+            color: #000033;
+            text-decoration: none;
+            font-size: 24px;
+            transition: transform 0.3s, background 0.3s;
+        }
+        /* Tooltip for each link */
+        .nav-menu a::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ff6600;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s;
+            white-space: nowrap;
+        }
+        .nav-menu a:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+        .nav-menu a:hover {
+            transform: scale(1.1);
+            background: #ff6600;
+            color: #fff;
+        }
+        /* Orbiting animation for active link */
+        .nav-menu a.active::before {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border: 2px solid #ff6600;
+            border-radius: 50%;
+            animation: orbit 4s linear infinite;
+        }
+        @keyframes orbit {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.05); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+        /* Hamburger menu button (hidden on desktop) */
+        .hamburger {
+            display: none;
+            font-size: 30px;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        /* Section styles */
+        section {
+            padding: 60px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Hero section */
+        #home {
+            height: 100vh;
+            background: url('https://images.unsplash.com/photo-1610296669228-55fa3d995c89') no-repeat center;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: #fff;
+            padding-top: 80px; /* Offset for fixed header */
+        }
+        #home .hero-content h2 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        #home .hero-content p {
+            font-size: 20px;
+            margin-bottom: 30px;
+        }
+        #home .hero-content a {
+            background: #ff6600;
+            color: #fff;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: transform 0.3s;
+        }
+        #home .hero-content a:hover {
+            transform: scale(1.05);
+        }
+
+        /* Treasures section */
+        #treasures {
+            background: #f2f2f2;
+            text-align: center;
+        }
+        #treasures h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        #ecommerce-plugin {
+            background: #fff;
+            padding: 20px;
+            border: 2px dashed #000033;
+            margin-top: 20px;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* About section */
+        #about {
+            background: #000033;
+            color: #fff;
+        }
+        #about h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        #about p {
+            max-width: 600px;
+            margin-bottom: 20px;
+        }
+        #about .gallery {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        #about .gallery img {
+            width: 33%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+        #rocket-model {
+            width: 100%;
+            height: 400px;
+            margin-bottom: 20px;
+        }
+        #map {
+            width: 100%;
+            height: 400px;
+        }
+
+        /* Blog section */
+        #blog {
+            background: #f2f2f2;
+            text-align: center;
+        }
+        #blog h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        #blog .blog-posts {
+            max-width: 600px;
+            margin: 0 auto 20px;
+            text-align: left;
+        }
+        #blog form {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        #blog input[type="email"] {
+            padding: 10px;
+            width: 300px;
+            border: 1px solid #000033;
+            border-radius: 5px;
+        }
+        #blog button {
+            background: #ff6600;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        #blog button:hover {
+            transform: scale(1.05);
+        }
+
+        /* Contact section */
+        #contact {
+            background: #000033;
+            color: #fff;
+            text-align: center;
+        }
+        #contact h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        #contact form {
+            max-width: 600px;
+            margin: 0 auto 20px;
+        }
+        #contact input, #contact textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #fff;
+            border-radius: 5px;
+        }
+        #contact button {
+            background: #ff6600;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        #contact button:hover {
+            transform: scale(1.05);
+        }
+
+        /* Footer styles */
+        footer {
+            background: url('https://images.unsplash.com/photo-1446776811953-b23d57bd21aa') no-repeat center;
+            background-size: cover;
+            padding: 20px;
+            text-align: center;
+            color: #fff;
+        }
+        footer .social-icons a {
+            color: #fff;
+            margin: 0 10px;
+            text-decoration: none;
+            font-size: 20px;
+            transition: color 0.3s;
+        }
+        footer .social-icons a:hover {
+            color: #ff6600;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .hamburger {
+                display: block;
+            }
+            .nav-menu {
+                position: absolute;
+                top: 70px;
+                right: -100%;
+                width: 100%;
+                height: 100vh;
+                background: rgba(0, 0, 51, 0.95);
+                flex-direction: column;
+                justify-content: center;
+                transition: right 0.3s ease;
+            }
+            #nav-toggle:checked ~ .nav-menu {
+                right: 0;
+            }
+            .nav-menu a {
+                width: 60px;
+                height: 60px;
+                margin: 10px 0;
+            }
+            .nav-menu a::after {
+                top: auto;
+                left: 100%;
+                transform: translateY(-50%);
+            }
+            #home .hero-content h2 {
+                font-size: 32px;
+            }
+            #about .gallery {
+                flex-direction: column;
+            }
+            #about .gallery img {
+                width: 100%;
+            }
+            #blog form {
+                flex-direction: column;
+                align-items: center;
+            }
+            #blog input[type="email"] {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Updated Header with sleek navigation -->
+    <header>
+        <nav>
+            <h1>Starship Treasures</h1>
+            <!-- Hamburger toggle for mobile -->
+            <input type="checkbox" id="nav-toggle" aria-label="Toggle navigation">
+            <label for="nav-toggle" class="hamburger">☰</label>
+            <!-- Navigation menu with circular buttons -->
+            <div class="nav-menu" role="navigation">
+                <a href="#home" data-tooltip="Home" class="active" aria-label="Home">🏠</a>
+                <a href="#treasures" data-tooltip="Treasures" aria-label="Treasures">💎</a>
+                <a href="#about" data-tooltip="About" aria-label="About">ℹ️</a>
+                <a href="#blog" data-tooltip="Blog" aria-label="Blog">📝</a>
+                <a href="#contact" data-tooltip="Contact" aria-label="Contact">📧</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero section -->
+    <section id="home">
+        <div class="hero-content">
+            <h2>Discover the treasures of space exploration</h2>
+            <p>Ron Parker’s global finds, now yours to own.</p>
+            <a href="#treasures">Explore Treasures</a>
+        </div>
+    </section>
+
+    <!-- Treasures section with e-commerce plugin placeholder -->
+    <section id="treasures">
+        <h2>Our Treasures</h2>
+        <p>Browse Ron’s unique finds from around the world.</p>
+        <div id="ecommerce-plugin">
+            <p>Insert E-commerce Plugin Here (e.g., Shopify or WooCommerce)</p>
+        </div>
+    </section>
+
+    <!-- About section with 3D rocket and map -->
+    <section id="about">
+        <h2>About Ron Parker</h2>
+        <p>Ron’s journey began with a single tile at a SpaceX launch. Now, he scours beaches worldwide—from Texas to the Caribbean—for Starship relics.</p>
+        <div class="gallery">
+            <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e" alt="Beach find">
+            <img src="https://images.unsplash.com/photo-1516820827954-7d2b81c41c59" alt="Tile discovery">
+            <img src="https://images.unsplash.com/photo-1532274402911-5a369e4c4bb5" alt="Adventure">
+        </div>
+        <!-- Placeholder for 3D rocket model -->
+        <div id="rocket-model"></div>
+        <!-- Placeholder for interactive map -->
+        <div id="map"></div>
+    </section>
+
+    <!-- Blog section -->
+    <section id="blog">
+        <h2>Latest Updates</h2>
+        <div class="blog-posts">
+            <h3>Latest Find: A charred tile washed ashore in Antigua, March 2025</h3>
+            <h3>New Expedition Planned for Mexican Beaches, April 2025</h3>
+        </div>
+        <form>
+            <input type="email" placeholder="Subscribe for updates" required>
+            <button type="submit">Subscribe</button>
+        </form>
+    </section>
+
+    <!-- Contact section -->
+    <section id="contact">
+        <h2>Contact Us</h2>
+        <form>
+            <input type="text" placeholder="Name" required>
+            <input type="email" placeholder="Email" required>
+            <textarea placeholder="Message" rows="5" required></textarea>
+            <button type="submit">Send</button>
+        </form>
+        <p>Email: ron@starshiptreasures.com</p>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2025 Starship Treasures</p>
+        <div class="social-icons">
+            <a href="#">🐦</a> <!-- Twitter -->
+            <a href="#">📷</a> <!-- Instagram -->
+            <a href="#">🔗</a> <!-- Facebook -->
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+                // Update active link
+                document.querySelectorAll('.nav-menu a').forEach(link => link.classList.remove('active'));
+                this.classList.add('active');
+                // Close mobile menu if open
+                document.getElementById('nav-toggle').checked = false;
+            });
+        });
+
+        // Three.js 3D Rocket Model (simplified Starship shape)
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / 400, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth > 768 ? 600 : 300, 400); // Responsive size
+        document.getElementById('rocket-model').appendChild(renderer.domElement);
+
+        // Create a simple rocket shape resembling Starship
+        const rocketGroup = new THREE.Group();
+
+        // Body: Tall cylinder for the main structure
+        const bodyGeometry = new THREE.CylinderGeometry(1, 1, 6, 32);
+        const bodyMaterial = new THREE.MeshBasicMaterial({ color: 0xaaaaaa });
+        const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+        rocketGroup.add(body);
+
+        // Nose cone: Tapered cylinder on top
+        const noseGeometry = new THREE.CylinderGeometry(0, 1, 2, 32);
+        const noseMaterial = new THREE.MeshBasicMaterial({ color: 0xaaaaaa });
+        const nose = new THREE.Mesh(noseGeometry, noseMaterial);
+        nose.position.y = 4; // Position above body
+        rocketGroup.add(nose);
+
+        // Fins: Simple triangles at the base (two fins for simplicity)
+        const finGeometry = new THREE.BoxGeometry(2, 0.1, 1);
+        const finMaterial = new THREE.MeshBasicMaterial({ color: 0xaaaaaa });
+        const fin1 = new THREE.Mesh(finGeometry, finMaterial);
+        fin1.position.set(1.5, -2.5, 0);
+        const fin2 = new THREE.Mesh(finGeometry, finMaterial);
+        fin2.position.set(-1.5, -2.5, 0);
+        rocketGroup.add(fin1, fin2);
+
+        scene.add(rocketGroup);
+        camera.position.z = 8;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            rocketGroup.rotation.y += 0.01; // Rotate the rocket
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Google Maps API Initialization
+        function initMap() {
+            const map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 2,
+                center: { lat: 25.7617, lng: -80.1918 } // Centered on Caribbean
+            });
+
+            // Markers for find locations
+            const markers = [
+                { lat: 26.1224, lng: -97.2140, title: 'South Padre Island, TX', desc: 'Heat tile found April 2024' },
+                { lat: 21.1619, lng: -86.8515, title: 'Mexican Beaches', desc: 'Tile found June 2024' },
+                { lat: 21.6410, lng: -71.1480, title: 'Long Bay Beach, Turks and Caicos', desc: 'Tile found August 2024' }
+            ];
+
+            markers.forEach(marker => {
+                new google.maps.Marker({
+                    position: { lat: marker.lat, lng: marker.lng },
+                    map: map,
+                    title: marker.title
+                }).addListener('click', () => {
+                    new google.maps.InfoWindow({ content: marker.desc }).open(map, this);
+                });
+            });
+        }
+
+        // Resize Three.js renderer on window resize
+        window.addEventListener('resize', () => {
+            const width = window.innerWidth > 768 ? 600 : 300;
+            renderer.setSize(width, 400);
+            camera.aspect = width / 400;
+            camera.updateProjectionMatrix();
+        });
+    </script>
+</body>
+</html>
