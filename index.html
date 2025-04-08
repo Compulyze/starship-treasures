@@ -110,6 +110,7 @@
             border: 2px solid #ff6600;
             border-radius: 50%;
             animation: orbit 4s linear infinite;
+            align-items: center;
         }
         @keyframes orbit {
             0% { transform: rotate(0deg) scale(1); }
@@ -170,6 +171,7 @@
         #treasures h2 {
             font-size: 36px;
             margin-bottom: 20px;
+            align-items: center;
         }
         #ecommerce-plugin {
             background: #fff;
@@ -186,30 +188,37 @@
         #about {
             background: #000033;
             color: #fff;
+            align-items: center;
         }
         #about h2 {
             font-size: 36px;
             margin-bottom: 20px;
+            align-items: center;
+
         }
         #about p {
             max-width: 600px;
             margin-bottom: 20px;
+            align-items: center;
         }
         #about .gallery {
             display: flex;
             gap: 20px;
             margin-bottom: 20px;
+            align-items: center;
         }
         #about .gallery img {
             width: 33%;
             height: 200px;
             object-fit: cover;
             border-radius: 5px;
+            align-items: center;
         }
         #rocket-model {
             width: 100%;
             height: 400px;
             margin-bottom: 20px;
+              align-items: center;
         }
         #map {
             width: 100%;
@@ -341,9 +350,11 @@
             }
             #about .gallery {
                 flex-direction: column;
+                align-items: center;
             }
             #about .gallery img {
                 width: 100%;
+                align-items: center;
             }
             #blog form {
                 flex-direction: column;
@@ -499,30 +510,6 @@
         }
         animate();
 
-        // Google Maps API Initialization
-        function initMap() {
-            const map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 2,
-                center: { lat: 25.7617, lng: -80.1918 } // Centered on Caribbean
-            });
-
-            // Markers for find locations
-            const markers = [
-                { lat: 26.1224, lng: -97.2140, title: 'South Padre Island, TX', desc: 'Heat tile found April 2024' },
-                { lat: 21.1619, lng: -86.8515, title: 'Mexican Beaches', desc: 'Tile found June 2024' },
-                { lat: 21.6410, lng: -71.1480, title: 'Long Bay Beach, Turks and Caicos', desc: 'Tile found August 2024' }
-            ];
-
-            markers.forEach(marker => {
-                new google.maps.Marker({
-                    position: { lat: marker.lat, lng: marker.lng },
-                    map: map,
-                    title: marker.title
-                }).addListener('click', () => {
-                    new google.maps.InfoWindow({ content: marker.desc }).open(map, this);
-                });
-            });
-        }
 
         // Resize Three.js renderer on window resize
         window.addEventListener('resize', () => {
