@@ -185,11 +185,14 @@
         }
 
         /* About section */
-        #about {
-            background: #000033;
-            color: #fff;
-            align-items: center;
-        }
+       #about {
+   		background: #000033;
+    	color: #fff;
+    	display: flex; /* Add flexbox to the section */
+    	flex-direction: column; /* Stack children vertically */
+    	align-items: center; /* Center horizontally */
+    	justify-content: center; /* Center vertically (optional, if you want vertical centering too) */
+}
         #about h2 {
             font-size: 36px;
             margin-bottom: 20px;
@@ -214,12 +217,19 @@
             border-radius: 5px;
             align-items: center;
         }
-        #rocket-model {
-            width: 100%;
-            height: 400px;
-            margin-bottom: 20px;
-              align-items: center;
-        }
+       #rocket-model {
+    	width: 100%;
+    	max-width: 600px; /* Match the renderer width for consistency */
+    	height: 400px;
+    	margin-bottom: 20px;
+   		display: flex; /* Add flexbox to center the canvas */
+    	justify-content: center; /* Center horizontally */
+    	align-items: center; /* Center vertically */
+}
+#rocket-model canvas {
+    display: block; /* Remove any inline behavior */
+    margin: 0 auto; /* Center the canvas horizontally */
+}
         #map {
             width: 100%;
             height: 400px;
@@ -413,8 +423,6 @@
         </div>
         <!-- Placeholder for 3D rocket model -->
         <div id="rocket-model"></div>
-        <!-- Placeholder for interactive map -->
-        <div id="map"></div>
     </section>
 
     <!-- Blog section -->
