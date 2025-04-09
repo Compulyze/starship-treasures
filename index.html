@@ -72,16 +72,19 @@
         .nav-menu a:hover {
             transform: scale(1.1);
             background: #ff6600;
-            color: #000;
+            color: #fff;
         }
+        /* Hexagon highlight for active link */
         .nav-menu a.active::before {
             content: '';
             position: absolute;
             width: 48px;
             height: 48px;
+            background: transparent;
             border: 2px solid #ff6600;
-            border-radius: 50%;
+            clip-path: polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0% 50%);
             animation: orbit 4s linear infinite;
+            z-index: -1; /* Behind the button */
         }
         @keyframes orbit {
             0% { transform: rotate(0deg) scale(1); }
@@ -115,23 +118,28 @@
                 right: 0;
             }
             .nav-menu a {
-                width: 200px; /* Wider for text */
+                width: 200px;
                 height: 50px;
-                border-radius: 25px; /* Adjusted for longer shape */
-                margin: 10px 0;
+                border-radius: 25px;
                 justify-content: flex-start;
-                padding-left: 15px; /* Space for icon */
+                padding-left: 15px;
                 font-size: 18px;
-                position: relative;
+                background: #fff; /* Ensure background stays white */
             }
             .nav-menu a::after {
-                content: attr(data-title); /* Use data-title for mobile text */
+                content: attr(data-title);
                 position: absolute;
-                left: 50px; /* Position text after icon */
-                color: #fff;
+                left: 50px;
+                color: #000033; /* Dark color for contrast on white background */
                 font-size: 16px;
                 top: 50%;
                 transform: translateY(-50%);
+            }
+            .nav-menu a.active::before {
+                width: 220px; /* Wider to fit the elongated button */
+                height: 58px; /* Taller to match */
+                top: -4px; /* Center vertically */
+                left: -10px; /* Center horizontally */
             }
         }
 
