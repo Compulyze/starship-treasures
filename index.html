@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Starship Treasures</title>
-    <!-- External CDN for Three.js (only for rocket model) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
     <style>
         /* Global styles */
         * {
@@ -21,10 +19,10 @@
         }
         h1, h2, h3 {
             font-family: 'Futura', sans-serif;
-            text-shadow: 0 0 5px rgba(255, 255, 255, 0.8); /* Shadow for readability */
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
         }
         p {
-            text-shadow: 0 0 3px rgba(255, 255, 255, 0.6); /* Subtle shadow for text */
+            text-shadow: 0 0 3px rgba(255, 255, 255, 0.6);
         }
 
         /* Header styles */
@@ -38,7 +36,7 @@
             z-index: 1000;
         }
         nav {
-            max-width: 1200px;
+            max-width: 1000px;
             margin: 0 auto;
             display: flex;
             justify-content: space-between;
@@ -69,6 +67,7 @@
             text-decoration: none;
             font-size: 20px;
             transition: transform 0.2s, background 0.2s;
+            position: relative;
         }
         .nav-menu a:hover {
             transform: scale(1.1);
@@ -94,6 +93,46 @@
             font-size: 26px;
             color: #fff;
             cursor: pointer;
+        }
+        /* Mobile menu styles */
+        @media (max-width: 768px) {
+            .hamburger {
+                display: block;
+            }
+            .nav-menu {
+                position: absolute;
+                top: 50px;
+                right: -100%;
+                width: 100%;
+                height: calc(100vh - 50px);
+                background: rgba(0, 0, 51, 0.95);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                transition: right 0.3s ease;
+            }
+            #nav-toggle:checked ~ .nav-menu {
+                right: 0;
+            }
+            .nav-menu a {
+                width: 200px; /* Wider for text */
+                height: 50px;
+                border-radius: 25px; /* Adjusted for longer shape */
+                margin: 10px 0;
+                justify-content: flex-start;
+                padding-left: 15px; /* Space for icon */
+                font-size: 18px;
+                position: relative;
+            }
+            .nav-menu a::after {
+                content: attr(data-title); /* Use data-title for mobile text */
+                position: absolute;
+                left: 50px; /* Position text after icon */
+                color: #fff;
+                font-size: 16px;
+                top: 50%;
+                transform: translateY(-50%);
+            }
         }
 
         /* Section styles */
@@ -172,11 +211,11 @@
         }
         #slideshow {
             width: 100%;
-            max-width: 540px; /* Reduced frame size */
-            height: 360px; /* Reduced frame size */
+            max-width: 540px;
+            height: 360px;
             position: relative;
             margin-bottom: 30px;
-            border: 8px solid #fff; /* Slightly smaller frame */
+            border: 8px solid #fff;
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
@@ -190,7 +229,7 @@
         .slideshow-container img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Ensures clean display across resolutions */
+            object-fit: cover;
             position: absolute;
             top: 0;
             left: 100%;
@@ -235,24 +274,20 @@
         #next-arrow {
             right: -45px;
         }
-        #rocket-model {
-            width: 100%;
-            max-width: 500px;
-            height: 350px;
-            margin-bottom: 30px;
-        }
         #map {
             width: 100%;
             max-width: 600px;
-            height: 450px;
+            height: 400px;
             margin-bottom: 30px;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
         #map iframe {
             width: 100%;
-            height: 100%;
+            height: 480px;
             border: none;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            margin-top: -80px;
         }
 
         /* Blog section */
@@ -347,28 +382,6 @@
 
         /* Responsive design */
         @media (max-width: 768px) {
-            .hamburger {
-                display: block;
-            }
-            .nav-menu {
-                position: absolute;
-                top: 50px;
-                right: -100%;
-                width: 100%;
-                height: calc(100vh - 50px);
-                background: rgba(0, 0, 51, 0.95);
-                flex-direction: column;
-                justify-content: center;
-                transition: right 0.3s ease;
-            }
-            #nav-toggle:checked ~ .nav-menu {
-                right: 0;
-            }
-            .nav-menu a {
-                width: 50px;
-                height: 50px;
-                margin: 8px 0;
-            }
             #home .hero-content h2 {
                 font-size: 28px;
             }
@@ -385,13 +398,9 @@
             #next-arrow {
                 right: 5px;
             }
-            #rocket-model {
-                max-width: 300px;
-                height: 250px;
-            }
             #map {
                 max-width: 300px;
-                height: 240px;
+                height: 200px;
             }
             #blog form {
                 flex-direction: column;
@@ -411,11 +420,11 @@
             <input type="checkbox" id="nav-toggle" aria-label="Toggle navigation">
             <label for="nav-toggle" class="hamburger">☰</label>
             <div class="nav-menu" role="navigation">
-                <a href="#home" data-tooltip="Home" class="active" aria-label="Home">🏠</a>
-                <a href="#treasures" data-tooltip="Treasures" aria-label="Treasures">💎</a>
-                <a href="#about" data-tooltip="About" aria-label="About">ℹ️</a>
-                <a href="#blog" data-tooltip="Blog" aria-label="Blog">📝</a>
-                <a href="#contact" data-tooltip="Contact" aria-label="Contact">📧</a>
+                <a href="#home" data-tooltip="Home" data-title="Home" class="active" aria-label="Home">🏠</a>
+                <a href="#treasures" data-tooltip="Treasures" data-title="Treasures" aria-label="Treasures">💎</a>
+                <a href="#about" data-tooltip="About" data-title="About" aria-label="About">ℹ️</a>
+                <a href="#blog" data-tooltip="Blog" data-title="Blog" aria-label="Blog">📝</a>
+                <a href="#contact" data-tooltip="Contact" data-title="Contact" aria-label="Contact">📧</a>
             </div>
         </nav>
     </header>
@@ -450,7 +459,6 @@
             </div>
             <button id="next-arrow" class="slideshow-arrow">→</button>
         </div>
-        <div id="rocket-model"></div>
         <div id="map">
             <iframe src="https://www.google.com/maps/d/embed?mid=1sVUo_R3QXH0LVK1ZhefGWWAFdd1zk_0&ehbc=2E312F&noprof=1" width="600" height="450"></iframe>
         </div>
@@ -520,37 +528,6 @@
 
         // Auto-start slideshow
         setInterval(() => updateSlide('next'), 5000);
-
-        // Three.js Rocket Model
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, 500 / 350, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(500, 350);
-        document.getElementById('rocket-model').appendChild(renderer.domElement);
-
-        const rocket = new THREE.Group();
-        rocket.add(new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 6, 32), new THREE.MeshBasicMaterial({ color: 0xaaaaaa })));
-        rocket.add(new THREE.Mesh(new THREE.CylinderGeometry(0, 1, 2, 32), new THREE.MeshBasicMaterial({ color: 0xaaaaaa })).position.set(0, 4, 0));
-        const fin = new THREE.Mesh(new THREE.BoxGeometry(2, 0.1, 1), new THREE.MeshBasicMaterial({ color: 0xaaaaaa }));
-        rocket.add(fin.position.set(1.5, -2.5, 0), fin.clone().position.set(-1.5, -2.5, 0));
-        scene.add(rocket);
-        camera.position.z = 8;
-
-        function animate() {
-            requestAnimationFrame(animate);
-            rocket.rotation.y += 0.01;
-            renderer.render(scene, camera);
-        }
-        animate();
-
-        // Resize handler
-        window.addEventListener('resize', () => {
-            const width = window.innerWidth > 768 ? 500 : 300;
-            const height = window.innerWidth > 768 ? 350 : 250;
-            renderer.setSize(width, height);
-            camera.aspect = width / height;
-            camera.updateProjectionMatrix();
-        });
     </script>
 </body>
 </html>
