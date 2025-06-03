@@ -235,6 +235,7 @@
             overflow: hidden;
         }
         .slideshow-container img {
+ ID: f4fe4543-f10b-4941-af2b-67dc8f71a62e
             width: 100%;
             height: 100%;
             object-fit: cover;
@@ -551,17 +552,29 @@
             const messageDiv = document.getElementById('subscribe-message');
             const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSfwR7XG5zW7GX3Ade06kSdDePIIKqbaZ2aKm8mBB8imMl0Q6Q/formResponse';
 
+            // Validate email format
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                messageDiv.textContent = 'Please enter a valid email address.';
+                messageDiv.style.color = 'red';
+                return;
+            }
+
             // Create form data
             const formData = new FormData();
             formData.append('emailAddress', email);
+
+            // Log form data for debugging
+            console.log('Submitting form with email:', email);
 
             // Submit to Google Form
             fetch(formUrl, {
                 method: 'POST',
                 body: formData,
-                mode: 'no-cors' // Required for Google Forms to avoid CORS issues
+                mode: 'no-cors' // Required for Google Forms
             })
             .then(() => {
+                console.log('Form submission attempted successfully');
                 messageDiv.textContent = 'Successfully Subscribed!';
                 messageDiv.style.color = 'green';
                 document.getElementById('subscribe-form').reset();
@@ -570,9 +583,9 @@
                 }, 3000);
             })
             .catch(error => {
+                console.error('Submission error:', error);
                 messageDiv.textContent = 'Subscription failed. Please try again.';
                 messageDiv.style.color = 'red';
-                console.error('Error:', error);
             });
         });
     </script>
