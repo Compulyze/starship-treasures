@@ -335,6 +335,12 @@
         #blog button:hover {
             transform: scale(1.05);
         }
+        #subscribe-message {
+            font-size: 14px;
+            margin-top: 8px;
+            min-height: 20px; /* Prevents layout shift */
+            text-align: center;
+        }
 
         /* Contact section */
         #contact {
@@ -479,8 +485,9 @@
             <h3>Latest Find: A charred tile washed ashore in Antigua, March 2025</h3>
             <h3>New Expedition Planned for Mexican Beaches, April 2025</h3>
         </div>
-        <form>
-            <input type="email" placeholder="Subscribe for updates" required>
+        <form id="subscribe-form">
+            <input type="email" id="email-input" placeholder="Subscribe for updates" required>
+            <div id="subscribe-message" aria-live="polite"></div>
             <button type="submit">Subscribe</button>
         </form>
     </section>
@@ -536,6 +543,38 @@
 
         // Auto-start slideshow
         setInterval(() => updateSlide('next'), 5000);
+
+        // Handle Google Form submission
+        document.getElementById('subscribe-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email-input').value;
+            const messageDiv = document.getElementById('subscribe-message');
+            const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSfwR7XG5zW7GX3Ade06kSdDePIIKqbaZ2aKm8mBB8imMl0Q6Q/formResponse';
+
+            // Create form data
+            const formData = new FormData();
+            formData.append('emailAddress', email);
+
+            // Submit to Google Form
+            fetch(formUrl, {
+                method: 'POST',
+                body: formData,
+                mode: 'no-cors' // Required for Google Forms to avoid CORS issues
+            })
+            .then(() => {
+                messageDiv.textContent = 'Successfully Subscribed!';
+                messageDiv.style.color = 'green';
+                document.getElementById('subscribe-form').reset();
+                setTimeout(() => {
+                    messageDiv.textContent = '';
+                }, 3000);
+            })
+            .catch(error => {
+                messageDiv.textContent = 'Subscription failed. Please try again.';
+                messageDiv.style.color = 'red';
+                console.error('Error:', error);
+            });
+        });
     </script>
 </body>
 </html>
