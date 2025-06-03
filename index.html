@@ -124,22 +124,22 @@
                 justify-content: flex-start;
                 padding-left: 15px;
                 font-size: 18px;
-                background: #fff; /* Ensure background stays white */
+                background: #fff;
             }
             .nav-menu a::after {
                 content: attr(data-title);
                 position: absolute;
                 left: 50px;
-                color: #000033; /* Dark color for contrast on white background */
+                color: #000033;
                 font-size: 16px;
                 top: 50%;
                 transform: translateY(-50%);
             }
             .nav-menu a.active::before {
-                width: 220px; /* Wider to fit the elongated button */
-                height: 58px; /* Taller to match */
-                top: -4px; /* Center vertically */
-                left: -10px; /* Center horizontally */
+                width: 220px;
+                height: 58px;
+                top: -4px;
+                left: -10px;
             }
         }
 
@@ -235,7 +235,6 @@
             overflow: hidden;
         }
         .slideshow-container img {
- ID: f4fe4543-f10b-4941-af2b-67dc8f71a62e
             width: 100%;
             height: 100%;
             object-fit: cover;
@@ -339,7 +338,7 @@
         #subscribe-message {
             font-size: 14px;
             margin-top: 8px;
-            min-height: 20px; /* Prevents layout shift */
+            min-height: 20px;
             text-align: center;
         }
 
@@ -364,6 +363,11 @@
             border: 1px solid #fff;
             border-radius: 4px;
         }
+        #contact .required::after {
+            content: '*';
+            color: #ff6600;
+            margin-left: 4px;
+        }
         #contact button {
             background: #ff6600;
             color: #fff;
@@ -375,6 +379,12 @@
         }
         #contact button:hover {
             transform: scale(1.05);
+        }
+        #contact-message {
+            font-size: 14px;
+            margin-top: 8px;
+            min-height: 20px;
+            text-align: center;
         }
 
         /* Footer styles */
@@ -496,11 +506,18 @@
     <!-- Contact section -->
     <section id="contact">
         <h2>Contact Us</h2>
-        <form>
-            <input type="text" placeholder="Name" required>
-            <input type="email" placeholder="Email" required>
-            <textarea placeholder="Message" rows="5" required></textarea>
+        <form id="contact-form">
+            <div class="form-group">
+                <input type="text" id="contact-name" placeholder="Name" required class="required">
+            </div>
+            <div class="form-group">
+                <input type="email" id="contact-email" placeholder="Email" required class="required">
+            </div>
+            <div class="form-group">
+                <textarea id="contact-message" placeholder="Message" rows="5" required class="required"></textarea>
+            </div>
             <button type="submit">Send</button>
+            <div id="contact-message" aria-live="polite"></div>
         </form>
         <p>Email: ron@starshiptreasures.com</p>
     </section>
@@ -545,7 +562,7 @@
         // Auto-start slideshow
         setInterval(() => updateSlide('next'), 5000);
 
-        // Handle Google Form submission
+        // Blog form submission (Newsletter)
         document.getElementById('subscribe-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const email = document.getElementById('email-input').value;
@@ -565,16 +582,16 @@
             formData.append('emailAddress', email);
 
             // Log form data for debugging
-            console.log('Submitting form with email:', email);
+            console.log('Submitting newsletter form with email:', email);
 
             // Submit to Google Form
             fetch(formUrl, {
                 method: 'POST',
                 body: formData,
-                mode: 'no-cors' // Required for Google Forms
+                mode: 'no-cors'
             })
             .then(() => {
-                console.log('Form submission attempted successfully');
+                console.log('Newsletter form submission attempted successfully');
                 messageDiv.textContent = 'Successfully Subscribed!';
                 messageDiv.style.color = 'green';
                 document.getElementById('subscribe-form').reset();
@@ -583,8 +600,66 @@
                 }, 3000);
             })
             .catch(error => {
-                console.error('Submission error:', error);
+                console.error('Newsletter submission error:', error);
                 messageDiv.textContent = 'Subscription failed. Please try again.';
+                messageDiv.style.color = 'red';
+            });
+        });
+
+        // Contact form submission
+        document.getElementById('contact-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('contact-name').value.trim();
+            const email = document.getElementById('contact-email').value.trim();
+            const message = document.getElementById('contact-message').value.trim();
+            const messageDiv = document.getElementById('contact-message');
+            const formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSe-90ZLw2HPh1K2cJXOe1J2OfwA__ugH6rFfO0cVP3_HO5yJQ/formResponse';
+
+            // Validate inputs
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!name) {
+                messageDiv.textContent = 'Please enter your name.';
+                messageDiv.style.color = 'red';
+                return;
+            }
+            if (!emailRegex.test(email)) {
+                messageDiv.textContent = 'Please enter a valid email address.';
+                messageDiv.style.color = 'red';
+                return;
+            }
+            if (!message) {
+                messageDiv.textContent = 'Please enter a message.';
+                messageDiv.style.color = 'red';
+                return;
+            }
+
+            // Create form data
+            const formData = new FormData();
+            formData.append('entry.1544106604', name);
+            formData.append('emailAddress', email);
+            formData.append('entry.1393530179', message);
+
+            // Log form data for debugging
+            console.log('Submitting contact form:', { name, email, message });
+
+            // Submit to Google Form
+            fetch(formUrl, {
+                method: 'POST',
+                body: formData,
+                mode: 'no-cors'
+            })
+            .then(() => {
+                console.log('Contact form submission attempted successfully');
+                messageDiv.textContent = 'Successfully Submitted!';
+                messageDiv.style.color = 'green';
+                document.getElementById('contact-form').reset();
+                setTimeout(() => {
+                    messageDiv.textContent = '';
+                }, 3000);
+            })
+            .catch(error => {
+                console.error('Contact submission error:', error);
+                messageDiv.textContent = 'Submission failed. Please try again.';
                 messageDiv.style.color = 'red';
             });
         });
